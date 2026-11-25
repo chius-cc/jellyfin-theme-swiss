@@ -6,9 +6,9 @@ A minimalist **warm-paper light monospace theme** for Jellyfin (`10.10`, `10.11`
 
 ## Preview
 
-| Home | Item Detail | Sign In |
-| :---: | :---: | :---: |
-| ![Home](screenshots/desktop-home.png) | ![Detail](screenshots/desktop-detail.png) | ![Login](screenshots/desktop-login.png) |
+| Home | Library | Item Detail | Sign In |
+| :---: | :---: | :---: | :---: |
+| ![Home](screenshots/desktop-home.png) | ![Library](screenshots/desktop-library.png) | ![Detail](screenshots/desktop-detail.png) | ![Login](screenshots/desktop-login.png) |
 
 ## Installation
 
