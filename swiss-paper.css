@@ -1,0 +1,1287 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400;500;700&display=swap');
+
+/*!
+ * Swiss Paper — Custom Light Theme for Jellyfin 12.4+
+ * Aesthetic: Paper Monospace Swiss (chius.me / Chipaper warm-paper preset)
+ * Interaction patterns synthesized from top github.com/topics/jellyfin-theme repos
+ * (ElegantFin-JF12, Netflin, Jellyfish, Catppuccin Latte, NeutralFin)
+ */
+
+/* ==========================================================================
+   1. DESIGN TOKENS & JELLYFIN 12 PALETTE BRIDGE
+   Forced across :root and both data-theme states so every client renders in
+   warm-paper light mode immediately without per-device settings changes.
+   ========================================================================== */
+
+:root,
+html,
+html[data-theme],
+html[data-theme="dark"],
+html[data-theme="light"] {
+    color-scheme: light;
+
+    /* Swiss Paper Core Palette */
+    --bg: #fdfcfb;
+    --bg-rgb: 253 252 251;
+    --text: #292c30;
+    --text-rgb: 41 44 48;
+    --muted: #6b7076;
+    --muted-rgb: 107 112 118;
+    --muted-on-soft: #52575d;
+    --accent: #256786;
+    --accent-rgb: 37 103 134;
+    --accent-hover: #124c68;
+    --mark: #b24c37;
+    --mark-rgb: 178 76 55;
+    --line: #e5e4e1;
+    --line-strong: rgb(41 44 48 / 0.18);
+    --soft: #f2f1ee;
+    --soft-hover: #e8e6e1;
+    --code-bg: #f5f4f1;
+
+    /* Typography & Swiss Geometry */
+    --font: "Google Sans Code", "Sarasa Mono SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-monospace, monospace;
+    --radius-xs: 3px;
+    --radius: 4px;
+    --dur: 160ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Scoped Cinema-Dark Video Player OSD Tokens */
+    --osd-bg: rgb(26 30 38 / 0.90);
+    --osd-text: #fdfcfb;
+    --osd-muted: #c2c8d2;
+    --osd-line: rgb(253 252 251 / 0.18);
+    --osd-accent: #eab38b;
+    --osd-progress: #b24c37;
+
+    /* Jellyfin 12 Native MUI Palette Bridge */
+    --jf-card-borderRadius: var(--radius);
+    --jf-palette-background-default: var(--bg);
+    --jf-palette-background-defaultChannel: var(--bg-rgb);
+    --jf-palette-background-defaultImage: none;
+    --jf-palette-background-paper: var(--bg);
+    --jf-palette-background-paperChannel: var(--bg-rgb);
+
+    --jf-palette-AppBar-defaultBg: var(--bg);
+    --jf-palette-AppBar-transparentBg: var(--bg);
+    --jf-palette-AppBar-gradient: none;
+
+    --jf-palette-text-primary: var(--text);
+    --jf-palette-text-primaryChannel: var(--text-rgb);
+    --jf-palette-text-secondary: var(--muted);
+    --jf-palette-text-secondaryChannel: var(--muted-rgb);
+    --jf-palette-text-disabled: rgb(41 44 48 / 0.42);
+    --jf-palette-common-white: var(--bg);
+    --jf-palette-common-whiteChannel: var(--bg-rgb);
+
+    --jf-palette-primary-main: var(--accent);
+    --jf-palette-primary-mainChannel: var(--accent-rgb);
+    --jf-palette-primary-light: var(--accent);
+    --jf-palette-primary-dark: var(--accent-hover);
+    --jf-palette-primary-contrastText: var(--bg);
+
+    --jf-palette-secondary-main: var(--accent);
+    --jf-palette-secondary-mainChannel: var(--accent-rgb);
+    --jf-palette-secondary-contrastText: var(--bg);
+
+    --jf-palette-error-main: var(--mark);
+    --jf-palette-error-mainChannel: var(--mark-rgb);
+    --jf-palette-error-light: var(--mark);
+    --jf-palette-error-contrastText: var(--bg);
+
+    --jf-palette-Alert-infoFilledBg: var(--accent);
+    --jf-palette-Alert-infoFilledColor: var(--bg);
+
+    --jf-palette-divider: var(--line);
+    --jf-palette-dividerChannel: var(--text-rgb);
+    --jf-palette-TableCell-border: var(--line);
+    --jf-palette-Avatar-defaultBg: var(--soft);
+
+    --jf-palette-action-hover: var(--soft);
+    --jf-palette-action-selected: var(--soft);
+    --jf-palette-action-selectedOpacity: 0.14;
+    --jf-palette-action-focus: rgb(37 103 134 / 0.14);
+    --jf-palette-action-active: var(--text);
+
+    --jf-palette-FilledInput-bg: var(--soft);
+    --jf-palette-FilledInput-hoverBg: var(--soft-hover);
+    --jf-palette-FilledInput-borderColor: var(--line-strong);
+
+    --jf-palette-Button-inheritContainedBg: var(--soft);
+    --jf-palette-Button-inheritContainedHoverBg: var(--soft-hover);
+
+    --jf-palette-SnackbarContent-bg: var(--text);
+    --jf-palette-SnackbarContent-color: var(--bg);
+
+    --jf-palette-LinearProgress-primaryBg: rgb(41 44 48 / 0.22);
+    --jf-palette-LinearProgress-secondaryBg: rgb(41 44 48 / 0.22);
+}
+
+/* ==========================================================================
+   2. GLOBAL BASE, TYPOGRAPHY & ACCESSIBILITY
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    scrollbar-color: rgb(41 44 48 / 0.26) var(--soft);
+    scrollbar-width: thin;
+}
+
+html,
+body,
+.backgroundContainer,
+.nowPlayingPlaylist,
+.mainAnimatedPages,
+.mainAnimatedPage {
+    background-color: var(--bg) !important;
+    background-image: none !important;
+    color: var(--text);
+    font-family: var(--font);
+}
+
+html {
+    font-size: 16px;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
+}
+
+body {
+    line-height: 1.65;
+    line-break: strict;
+    overflow-wrap: break-word;
+    overflow-x: clip;
+}
+
+#reactRoot,
+.mainAnimatedPages,
+.mainAnimatedPage {
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+/* Apply monospace font to UI & MUI text, strictly excluding icon ligature fonts */
+button,
+input,
+select,
+textarea,
+[class*="Mui"]:not(.MuiIcon-root):not(.MuiSvgIcon-root):not(.material-icons):not(.material-icons-round):not(.material-symbols-rounded):not([class*="material-icons"]) {
+    font-family: var(--font);
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+::-moz-selection {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+/* Text Links */
+a,
+.button-link,
+.emby-linkbutton {
+    color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    transition: color var(--dur) var(--ease);
+}
+
+a:hover,
+.button-link:hover,
+.emby-linkbutton:hover {
+    color: var(--accent-hover);
+}
+
+/* Instant Focus Ring (Zero transition delay, Swiss dashed outline) */
+:focus-visible,
+.Mui-focusVisible,
+.show-focus:focus {
+    outline: 2px dashed var(--accent) !important;
+    outline-offset: 3px !important;
+    transition: none !important;
+}
+
+/* Tabular Numbers for time, episodes, ratings, and metadata alignment */
+.itemProgressBar,
+.listItemAside,
+.mediaInfoItem,
+.countIndicator,
+.starRatingContainer,
+.runtime,
+.year,
+.videoOsdBottom .osdTimeText,
+.osdPositionText,
+.osdDurationText {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track-piece {
+    background: var(--soft);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(41 44 48 / 0.24);
+    border-radius: var(--radius-xs);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(41 44 48 / 0.42);
+}
+
+/* ==========================================================================
+   3. APP BAR, NAVIGATION TABS & SEGMENTED LIBRARY TOOLBAR
+   ========================================================================== */
+
+/* Modern JF12 MUI AppBar & Legacy SkinHeader: Opaque warm paper + 1px hairline */
+.MuiAppBar-root,
+.MuiAppBar-root.MuiAppBar-colorDefault,
+.MuiAppBar-root.MuiAppBar-colorTransparent,
+.skinHeader,
+.skinHeader-withBackground,
+.skinHeader.semiTransparent {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    color: var(--text) !important;
+}
+
+.MuiAppBar-root::before,
+.MuiAppBar-root::after {
+    display: none !important;
+}
+
+/* Brand Logo & Wordmark */
+.MuiAppBar-root .MuiButton-text:not(.MuiButtonGroup-grouped):has(.MuiButton-startIcon > img) {
+    background: transparent !important;
+    color: var(--text) !important;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    text-decoration: none !important;
+}
+
+/* Make white-on-transparent legacy banner logo legible when client defaults to dark theme */
+html[data-theme="dark"] .pageTitleWithDefaultLogo {
+    filter: invert(0.84) hue-rotate(180deg);
+}
+
+/* App Bar Icon Buttons */
+.MuiAppBar-root .MuiIconButton-root,
+.skinHeader .paper-icon-button-light,
+.headerButton {
+    color: var(--text) !important;
+    border-radius: var(--radius) !important;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.MuiAppBar-root .MuiIconButton-root:hover,
+.skinHeader .paper-icon-button-light:hover:not(:disabled),
+.headerButton:hover {
+    background-color: var(--soft) !important;
+    color: var(--accent) !important;
+}
+
+/* Primary Library Navigation Buttons (Modern AppBar & Legacy Tabs): Wavy underline */
+.MuiAppBar-root .MuiButton-text:not(.MuiButtonGroup-grouped, :has(.MuiButton-startIcon > img)),
+.emby-tab-button {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    color: var(--muted) !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: none;
+    transition: color var(--dur) var(--ease);
+}
+
+.MuiAppBar-root .MuiButton-text:not(.MuiButtonGroup-grouped, :has(.MuiButton-startIcon > img)):hover,
+.emby-tab-button:hover {
+    background: transparent !important;
+    color: var(--text) !important;
+    text-decoration: underline !important;
+    text-decoration-style: wavy !important;
+    text-decoration-thickness: 1.5px !important;
+    text-decoration-color: var(--accent) !important;
+    text-underline-offset: 0.45em !important;
+}
+
+.MuiAppBar-root .MuiButton-textPrimary:not(.MuiButtonGroup-grouped, :has(.MuiButton-startIcon > img)),
+.emby-tab-button-active,
+.emby-tab-button-active > .emby-button-foreground {
+    color: var(--text) !important;
+    font-weight: 700 !important;
+    text-decoration: underline !important;
+    text-decoration-style: wavy !important;
+    text-decoration-thickness: 1.5px !important;
+    text-decoration-color: var(--accent) !important;
+    text-underline-offset: 0.45em !important;
+    box-shadow: none !important;
+}
+
+/* Hide MUI default underline bar where wavy underline takes over */
+.MuiTabs-indicator {
+    background-color: var(--accent) !important;
+    height: 2px !important;
+}
+
+/* Segmented Library Toolbar (Chipaper .site-nav-tools hairline pattern) */
+.MuiAppBar-root .MuiButtonGroup-root,
+.MuiAppBar-root .MuiButtonGroup-contained,
+.MuiAppBar-root .MuiButtonGroup-outlined {
+    background: var(--bg) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+
+.MuiAppBar-root .MuiButtonGroup-root .MuiButton-root,
+.MuiAppBar-root .MuiButtonGroup-contained .MuiButton-contained {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: var(--text) !important;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: none;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.MuiAppBar-root .MuiButtonGroup-root .MuiButton-root + .MuiButton-root {
+    border-inline-start: 1px solid var(--line) !important;
+}
+
+.MuiAppBar-root .MuiButtonGroup-root .MuiButton-root:hover {
+    background: var(--soft) !important;
+    color: var(--accent) !important;
+}
+
+.MuiAppBar-root .MuiButtonGroup-root .MuiButton-root:focus-visible {
+    outline-offset: -3px !important;
+}
+
+/* Legacy Secondary Page Top Offset Safety */
+body:has(.MuiAppBar-root) .libraryPage:not(.noSecondaryNavPage, .itemDetailPage) {
+    padding-top: 0.5rem;
+}
+
+/* Hide Modern AppBar during fullscreen video playback */
+body:has(.videoPlayerContainer-onTop) .MuiAppBar-root,
+body:has(.videoPlayerContainer-onTop) .MuiAppBar-root + div[aria-hidden="true"],
+body:has(.videoOsd-appBar) .MuiAppBar-root,
+body:has(.videoOsd-appBar) .MuiAppBar-root + div[aria-hidden="true"] {
+    display: none !important;
+}
+
+/* ==========================================================================
+   4. NAVIGATION DRAWER (MODERN & LEGACY)
+   ========================================================================== */
+
+.MuiDrawer-paper,
+.mainDrawer {
+    background-color: var(--bg) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border-inline-end: 1px solid var(--line) !important;
+    box-shadow: none !important;
+    color: var(--text) !important;
+}
+
+.MuiDrawer-paper .MuiListSubheader-root,
+.mainDrawer .sidebarHeader {
+    background: var(--bg) !important;
+    color: var(--muted) !important;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 0.45rem;
+    margin-bottom: 0.35rem;
+}
+
+.MuiDrawer-paper .MuiListItemButton-root,
+.mainDrawer .navMenuOption {
+    margin: 2px 8px;
+    border-radius: var(--radius) !important;
+    color: var(--text) !important;
+    border-inline-start: 2px solid transparent;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.MuiDrawer-paper .MuiListItemButton-root:hover,
+.mainDrawer .navMenuOption:hover,
+.mainDrawer .navMenuOption:focus {
+    background-color: var(--soft) !important;
+    color: var(--accent) !important;
+}
+
+.MuiDrawer-paper .MuiListItemButton-root.Mui-selected,
+.mainDrawer .navMenuOption-selected {
+    background-color: var(--soft) !important;
+    color: var(--text) !important;
+    border-inline-start: 2px solid var(--mark) !important;
+    font-weight: 700;
+}
+
+.MuiDrawer-paper .MuiListItemIcon-root,
+.mainDrawer .navMenuOptionIcon {
+    color: var(--muted) !important;
+}
+
+.MuiDrawer-paper .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root,
+.mainDrawer .navMenuOption-selected .navMenuOptionIcon {
+    color: var(--mark) !important;
+}
+
+/* ==========================================================================
+   5. HOME SECTIONS, CARDS, OVERLAYS, INDICATORS & PROGRESS BARS
+   Zero hover displacement; clean 1px frame around artwork; open text below.
+   ========================================================================== */
+
+/* Section Headings with Swiss Brick-Red # Prefix */
+.sectionTitle,
+.sectionTitle-cards {
+    color: var(--text) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.025em;
+}
+
+.sectionTitle:not(:empty)::before {
+    content: "# ";
+    color: var(--mark);
+    font-weight: 700;
+}
+
+/* Section "More" chevron / arrow links */
+.sectionTitleTextButton,
+a.more,
+.sectionTitle a {
+    color: var(--text) !important;
+    text-decoration: none;
+}
+
+.sectionTitleTextButton:hover .sectionTitle,
+a.more:hover .sectionTitle,
+.sectionTitle a:hover {
+    color: var(--accent) !important;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 0.28em;
+}
+
+.sectionTitleTextButton > .material-icons,
+a.more > .material-icons {
+    color: var(--muted) !important;
+    transition: color var(--dur) var(--ease);
+}
+
+.sectionTitleTextButton:hover > .material-icons,
+a.more:hover > .material-icons {
+    color: var(--accent) !important;
+}
+
+/* Poster / Card Image Container (Single-Layer Frame, Zero Shadow, Zero Zoom) */
+.cardBox {
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.cardBox.visualCardBox {
+    background: var(--bg) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+}
+
+.cardBox:not(.visualCardBox) .cardScalable,
+.cardBox:not(.visualCardBox) .cardImageContainer,
+.cardBox:not(.visualCardBox) .cardPadder,
+.cardOverlayContainer,
+.blurhash-canvas {
+    border-radius: var(--radius) !important;
+}
+
+.cardBox:not(.visualCardBox) .cardScalable {
+    border: 1px solid var(--line);
+    background-color: var(--soft) !important;
+    overflow: hidden;
+    transition: border-color var(--dur) var(--ease);
+}
+
+.cardBox:not(.visualCardBox) .cardPadder {
+    background-color: var(--soft) !important;
+}
+
+.cardPadder .cardImageIcon {
+    color: var(--muted) !important;
+}
+
+/* Strictly zero transform/scale/lift on card hover or focus */
+.card,
+.cardBox,
+.cardScalable,
+.cardImageContainer {
+    transform: none !important;
+}
+
+.card:hover .cardBox:not(.visualCardBox) .cardScalable,
+.card:focus-within .cardBox:not(.visualCardBox) .cardScalable {
+    border-color: var(--accent) !important;
+    transform: none !important;
+}
+
+/* Card Hover Overlay & Quick Actions (Jellyfish pattern adapted for Swiss clarity) */
+.cardOverlayContainer {
+    background-color: rgb(41 44 48 / 0.52) !important;
+    transition: opacity var(--dur) var(--ease);
+}
+
+.cardOverlayFab-primary {
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.cardOverlayFab-primary:hover {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: var(--bg) !important;
+    transform: none !important;
+}
+
+.cardOverlayButton,
+.cardOverlayButton-br > button.cardOverlayButton {
+    color: var(--bg) !important;
+    background-color: rgb(41 44 48 / 0.65) !important;
+    border-radius: var(--radius-xs) !important;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.cardOverlayButton:hover,
+.cardOverlayButton-br > button.cardOverlayButton:hover {
+    background-color: var(--accent) !important;
+    color: var(--bg) !important;
+}
+
+/* Ensure Watched / Favorite overlay buttons stay accessible on card hover */
+.cardOverlayButton:has(
+    > .cardOverlayButtonIcon:is(.playstatebutton-icon-unplayed, .playstatebutton-icon-played, .favorite),
+    > .MuiSvgIcon-root:is([data-testid="CheckIcon"], [data-testid="FavoriteIcon"])
+) {
+    display: flex !important;
+}
+
+/* Card Typography (Open below poster on --bg) */
+.cardText,
+.cardText-first,
+.cardText-first a {
+    color: var(--text) !important;
+    font-weight: 500;
+}
+
+.cardText-secondary,
+.fieldDescription,
+.programSecondaryTitle,
+.secondaryText {
+    color: var(--muted) !important;
+    font-size: 0.82rem;
+}
+
+.card:hover .cardText-first,
+.cardText-first a:hover {
+    color: var(--accent) !important;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 0.25em;
+}
+
+.cardTextActionButton {
+    color: inherit !important;
+}
+
+/* Card Indicators (Crisp Swiss corner badges, zero drop shadow) */
+.cardIndicators,
+.listItemIndicators {
+    top: 6px !important;
+    right: 6px !important;
+    gap: 4px;
+}
+
+.indicator,
+.countIndicator,
+.playedIndicator,
+.mediaSourceIndicator,
+.videoIndicator {
+    border-radius: var(--radius-xs) !important;
+    box-shadow: none !important;
+    border: 1px solid rgb(253 252 251 / 0.35);
+    font-weight: 700;
+}
+
+.countIndicator {
+    background-color: var(--mark) !important;
+    color: var(--bg) !important;
+}
+
+.playedIndicator {
+    background-color: var(--accent) !important;
+    color: var(--bg) !important;
+}
+
+.playstatebutton-icon-played,
+.ratingbutton-icon-withrating {
+    color: var(--mark) !important;
+}
+
+/* Resume Progress Bar (Flat Swiss edge bar) */
+.itemProgressBar {
+    background: rgb(41 44 48 / 0.24) !important;
+    height: 4px !important;
+    border-radius: 0 !important;
+}
+
+.itemProgressBarForeground,
+.itemProgressBar.playbackProgress .itemProgressBarForeground {
+    background-color: var(--mark) !important;
+}
+
+.itemLinearProgress.MuiLinearProgress-root {
+    background-color: rgb(41 44 48 / 0.24) !important;
+    height: 4px !important;
+    border-radius: var(--radius-xs) !important;
+    inset: auto 8px 8px !important;
+    width: auto !important;
+    box-shadow: none !important;
+}
+
+.itemLinearProgress .MuiLinearProgress-bar {
+    background-color: var(--mark) !important;
+}
+
+/* Horizontal Scroller Arrow Buttons */
+.emby-scrollbuttons {
+    color: var(--text) !important;
+}
+
+.emby-scrollbuttons-button {
+    background-color: var(--bg) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    color: var(--text) !important;
+    box-shadow: none !important;
+}
+
+.emby-scrollbuttons-button:hover {
+    background-color: var(--soft) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+}
+
+/* Alpha Picker */
+.alphaPickerButton {
+    color: var(--muted) !important;
+    background: transparent !important;
+    border-radius: var(--radius-xs) !important;
+    font-weight: 500;
+}
+
+.alphaPickerButton:hover {
+    color: var(--accent) !important;
+    background: var(--soft) !important;
+}
+
+.alphaPickerButton-selected {
+    background-color: var(--accent) !important;
+    color: var(--bg) !important;
+    font-weight: 700;
+}
+
+/* List View Rows */
+.listItem {
+    border-radius: var(--radius) !important;
+    transition: background-color var(--dur) var(--ease);
+}
+
+.listItem-border {
+    border-color: var(--line) !important;
+    border-bottom-style: dashed !important;
+}
+
+.listItem:hover,
+.listItem:focus {
+    background-color: var(--soft) !important;
+}
+
+.listItemBodyText {
+    color: var(--text) !important;
+}
+
+.listItem .secondary {
+    color: var(--muted) !important;
+}
+
+/* ==========================================================================
+   6. ITEM DETAIL PAGE & EPISODE LISTS
+   Guarantees high-contrast warm-paper legibility over artwork backdrops.
+   ========================================================================== */
+
+/* Warm Paper Veil over Backdrop so ink text always passes AAA contrast */
+.backgroundContainer.withBackdrop {
+    opacity: 1 !important;
+}
+
+.backgroundContainer.withBackdrop::after,
+.itemBackdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgb(253 252 251 / 0.45) 0%,
+        rgb(253 252 251 / 0.88) 48%,
+        #fdfcfb 82%
+    );
+}
+
+.itemBackdrop {
+    filter: saturate(0.85) contrast(0.96);
+}
+
+.detailPageWrapperContainer {
+    position: relative;
+    z-index: 1;
+}
+
+.detailPageWrapperContainer,
+.detailPagePrimaryContainer,
+.detailPageSecondaryContainer,
+.detailRibbon,
+.noBackdropTransparency .detailPageWrapperContainer {
+    background-color: transparent !important;
+    color: var(--text) !important;
+}
+
+.detailRibbon {
+    background: rgb(253 252 251 / 0.92) !important;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+.detailPageSecondaryContainer {
+    background-color: var(--bg) !important;
+    border-top: 1px solid var(--line);
+}
+
+/* Detail Poster */
+.itemDetailImage {
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    background-color: var(--soft);
+}
+
+/* Detail Titles & Taglines */
+#itemDetailPage .itemName,
+#itemDetailPage h1.itemName {
+    color: var(--text) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.035em;
+}
+
+#itemDetailPage .parentName,
+#itemDetailPage .parentName a {
+    color: var(--accent) !important;
+    font-weight: 600;
+}
+
+#itemDetailPage .tagline,
+#itemDetailPage .overview {
+    color: var(--text) !important;
+    line-height: 1.8;
+    max-width: 72ch;
+}
+
+/* Primary & Secondary Detail Buttons (Zero displacement, crisp border swap) */
+.mainDetailButtons .btnPlay,
+.mainDetailButtons .btnResume,
+.button-submit,
+.raised.button-submit {
+    background: var(--accent) !important;
+    background-color: var(--accent) !important;
+    color: var(--bg) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    font-weight: 600;
+    transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.mainDetailButtons .btnPlay:hover,
+.mainDetailButtons .btnResume:hover,
+.button-submit:hover,
+.raised.button-submit:hover {
+    background: var(--accent-hover) !important;
+    background-color: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+    color: var(--bg) !important;
+    transform: none !important;
+}
+
+.fab,
+.raised,
+a[data-role="button"],
+.detailButton,
+.button-flat {
+    background-color: var(--soft) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.fab:hover,
+.raised:hover,
+a[data-role="button"]:hover,
+.detailButton:hover {
+    background-color: var(--bg) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    transform: none !important;
+}
+
+.button-flat {
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+
+.button-flat:hover {
+    background-color: var(--soft) !important;
+    color: var(--accent) !important;
+}
+
+.button-delete {
+    background-color: var(--mark) !important;
+    color: var(--bg) !important;
+    border: 1px solid var(--mark) !important;
+    border-radius: var(--radius) !important;
+}
+
+.buttonActive {
+    color: var(--mark) !important;
+}
+
+/* Metadata Chips / Media Info / Tags / Genres */
+.mediaInfoItem,
+.mediaInfoText,
+.itemGenres a,
+.itemTags a,
+.MuiChip-root {
+    background-color: var(--soft) !important;
+    color: var(--muted-on-soft) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius-xs) !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+}
+
+.itemGenres a:hover,
+.itemTags a:hover,
+.MuiChip-clickable:hover {
+    background-color: var(--bg) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+}
+
+.starRatingContainer .starIcon {
+    color: var(--mark) !important;
+}
+
+/* Detail Page Sections & Episode List */
+.detailPageSecondaryContainer .detailSection,
+#childrenContent .listItem {
+    border-bottom: 1px dashed var(--line);
+}
+
+#childrenContent .listItemImage {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+/* ==========================================================================
+   7. FORMS, DIALOGS, POPOVERS, SEARCH, LOGIN & ADMIN DASHBOARD
+   ========================================================================== */
+
+/* Inputs, Textareas, Selects */
+.emby-input,
+.emby-textarea,
+.emby-select,
+.emby-select-withcolor,
+.MuiFilledInput-root,
+.MuiOutlinedInput-root {
+    background-color: var(--soft) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+}
+
+.emby-input:focus,
+.emby-textarea:focus,
+.emby-select:focus,
+.emby-select-withcolor:focus,
+.MuiFilledInput-root.Mui-focused,
+.MuiOutlinedInput-root.Mui-focused {
+    background-color: var(--bg) !important;
+    border-color: var(--accent) !important;
+}
+
+.emby-select-focusscale:focus {
+    transform: none !important;
+}
+
+.MuiFilledInput-root::before,
+.MuiFilledInput-root::after,
+.MuiOutlinedInput-notchedOutline {
+    border-color: transparent !important;
+}
+
+.inputLabel,
+.inputLabelUnfocused,
+.selectLabel,
+.textareaLabelUnfocused,
+.checkboxListLabel,
+.paperListLabel,
+.MuiInputLabel-root {
+    color: var(--text) !important;
+    font-weight: 500;
+}
+
+.inputLabelFocused,
+.selectLabelFocused,
+.textareaLabelFocused,
+.MuiInputLabel-root.Mui-focused {
+    color: var(--accent) !important;
+}
+
+/* Checkboxes, Radios, Switches */
+.checkboxOutline {
+    border-color: var(--text) !important;
+    border-radius: var(--radius-xs) !important;
+}
+
+.emby-checkbox:checked + span + .checkboxOutline {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: var(--bg) !important;
+}
+
+.MuiCheckbox-root.Mui-checked,
+.MuiRadio-root.Mui-checked,
+.MuiSwitch-switchBase.Mui-checked {
+    color: var(--accent) !important;
+}
+
+.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+    background-color: var(--accent) !important;
+}
+
+/* Dialogs, ActionSheets, MUI Popovers & Menus (Flat opaque paper, 1px hairline) */
+.dialog,
+.actionSheet,
+.formDialogHeader,
+.formDialogFooter,
+.collapseContent,
+.MuiDialog-paper,
+.MuiPopover-paper,
+.MuiMenu-paper,
+.MuiPaper-root:not(.MuiAppBar-root):not(.MuiDrawer-paper) {
+    background-color: var(--bg) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+}
+
+.MuiBackdrop-root,
+.dialogBackdropOpened {
+    background-color: rgb(41 44 48 / 0.34) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+.formDialogHeader:not(.formDialogHeader-clear) {
+    border-bottom: 1px solid var(--line) !important;
+    border-radius: 0 !important;
+}
+
+.formDialogFooter:not(.formDialogFooter-clear) {
+    border-top: 1px solid var(--line) !important;
+    border-radius: 0 !important;
+}
+
+.actionsheetDivider,
+.MuiDivider-root {
+    background-color: var(--line) !important;
+    border-color: var(--line) !important;
+}
+
+.actionSheetMenuItem:hover,
+.MuiMenuItem-root:hover,
+.MuiMenuItem-root.Mui-selected {
+    background-color: var(--soft) !important;
+    color: var(--accent) !important;
+}
+
+/* Search Page */
+#searchPage .searchfields-txtSearch {
+    background-color: var(--soft) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    color: var(--text) !important;
+    font-size: 1rem !important;
+    min-height: 44px;
+}
+
+#searchPage .searchfields-txtSearch:focus {
+    background-color: var(--bg) !important;
+    border-color: var(--accent) !important;
+}
+
+#searchPage .searchSuggestions a {
+    color: var(--accent) !important;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 0.25em;
+}
+
+/* Login Page (Centered Swiss Column) */
+#loginPage {
+    background-color: var(--bg) !important;
+    background-image: none !important;
+}
+
+#loginPage > div {
+    width: 100%;
+    max-width: 28rem;
+    margin-inline: auto;
+    padding-inline: 1rem !important;
+    box-sizing: border-box;
+}
+
+#loginPage .manualLoginForm,
+#loginPage .readOnlyContent {
+    width: 100% !important;
+    max-width: 100% !important;
+    background-color: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.75rem 1.5rem;
+    margin: 1.25rem 0 !important;
+    box-sizing: border-box;
+}
+
+#loginPage h1 {
+    color: var(--text) !important;
+    font-weight: 700;
+    letter-spacing: -0.045em;
+}
+
+#loginPage .emby-button.block {
+    min-height: 44px;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#loginPage .readOnlyContent .emby-button.block + .emby-button.block {
+    margin-top: 0.65rem;
+}
+
+/* Admin Dashboard & Settings */
+.paperList,
+.dashboardDocument,
+.activeSession {
+    background-color: var(--bg) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    color: var(--text) !important;
+}
+
+.paperList .listItem:not(:last-child) {
+    border-bottom: 1px dashed var(--line);
+}
+
+.infoBanner,
+.MuiAlert-root {
+    background-color: var(--soft) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-left: 3px solid var(--mark) !important;
+    border-radius: var(--radius) !important;
+}
+
+.metadataSidebarIcon {
+    color: var(--accent) !important;
+}
+
+.dashboardSection h2,
+.dashboardSection h3 {
+    color: var(--text) !important;
+    font-weight: 700;
+}
+
+.MuiTable-root,
+.tblLogs,
+.detailTable {
+    border: 1px solid var(--line);
+}
+
+.MuiTableHead-root th,
+.tblLogs th,
+.detailTable th {
+    background-color: var(--code-bg) !important;
+    color: var(--text) !important;
+    border-bottom: 1px solid var(--line) !important;
+    font-weight: 700;
+}
+
+.MuiTableBody-root td,
+.tblLogs td,
+.detailTable td {
+    border-bottom: 1px dashed var(--line) !important;
+    color: var(--text) !important;
+}
+
+/* Book / Comic / PDF Readers */
+#bookPlayer,
+#comicsPlayer,
+#comicsPlayer .swiper-pagination,
+#pdfPlayer,
+#dialogToc {
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+}
+
+#dialogToc .toc li a {
+    color: var(--text) !important;
+}
+
+#dialogToc .toc li a:hover {
+    color: var(--accent) !important;
+}
+
+/* ==========================================================================
+   8. VIDEO PLAYER OSD (SCOPED CINEMA-DARK EXCEPTION)
+   Keeps fullscreen playback comfortable without bright white glare.
+   ========================================================================== */
+
+.videoOsdBottom,
+.videoOsdBottom-maincontrols,
+.osdHeader.skinHeader,
+.osdHeader .videoOsd-appBar,
+.upNextContainer {
+    background: var(--osd-bg) !important;
+    background-color: var(--osd-bg) !important;
+    color: var(--osd-text) !important;
+    border-color: var(--osd-line) !important;
+    box-shadow: none !important;
+}
+
+.osdHeader.skinHeader {
+    pointer-events: none !important;
+    border-bottom: 1px solid var(--osd-line) !important;
+}
+
+.osdHeader.skinHeader .MuiToolbar-root {
+    pointer-events: auto;
+}
+
+.videoOsdBottom .paper-icon-button-light,
+.osdHeader .paper-icon-button-light,
+.osdHeader .MuiIconButton-root,
+.videoOsdBottom .osdTitle,
+.videoOsdBottom .osdTimeText {
+    color: var(--osd-text) !important;
+}
+
+.videoOsdBottom .paper-icon-button-light:hover:not(:disabled),
+.osdHeader .MuiIconButton-root:hover {
+    background-color: rgb(253 252 251 / 0.12) !important;
+    color: var(--osd-accent) !important;
+}
+
+.iconOsdProgressInner,
+.mdl-slider-background-lower,
+.sliderMarker.watched {
+    background-color: var(--osd-progress) !important;
+}
+
+.mdl-slider::-webkit-slider-thumb,
+.mdl-slider::-moz-range-thumb {
+    background-color: var(--osd-accent) !important;
+}
+
+.upNextDialog-countdownText {
+    color: var(--osd-accent) !important;
+}
+
+/* ==========================================================================
+   9. RESPONSIVE TOUCH TARGETS & REDUCED MOTION
+   ========================================================================== */
+
+@media (max-width: 760px) {
+    .MuiAppBar-root .MuiIconButton-root,
+    .skinHeader .paper-icon-button-light,
+    .headerButton,
+    .emby-tab-button,
+    .mainDetailButtons .emby-button,
+    .cardOverlayButton-br > button.cardOverlayButton {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    #loginPage .manualLoginForm,
+    #loginPage .readOnlyContent {
+        padding: 1.35rem 1rem;
+        margin: 0.85rem 0 !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
