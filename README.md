@@ -17,7 +17,7 @@ A minimalist **warm-paper light monospace theme** for Jellyfin (`10.10`, `10.11`
 Paste the line below into **Dashboard → General → Branding → Custom CSS** (for all users) or **Settings → Display → Custom CSS** (for your account only), then click **Save**:
 
 ```css
-@import url("https://cdn.jsdelivr.net/gh/chius-n/jellyfin-theme-swiss@main/swiss-paper.css");
+@import url("https://cdn.jsdelivr.net/gh/chius-cc/jellyfin-theme-swiss@main/swiss-paper.css");
 ```
 
 You do **not** need to switch your client theme to Light manually — Swiss Paper overrides both `html[data-theme="dark"]` and `html[data-theme="light"]` tokens so every client renders in warm-paper light mode out of the box.
@@ -37,7 +37,7 @@ You do **not** need to switch your client theme to Light manually — Swiss Pape
 Override any `:root` CSS variables after the `@import` line:
 
 ```css
-@import url("https://cdn.jsdelivr.net/gh/chius-n/jellyfin-theme-swiss@main/swiss-paper.css");
+@import url("https://cdn.jsdelivr.net/gh/chius-cc/jellyfin-theme-swiss@main/swiss-paper.css");
 
 :root,
 html[data-theme="dark"],
