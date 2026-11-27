@@ -1,6 +1,6 @@
 # Swiss Paper for Jellyfin
 
-A minimalist **warm-paper light monospace theme** for Jellyfin (`10.10`, `10.11`, and `12+`), inspired by Swiss International Typographic Style and [Chipaper](https://github.com/chius-me/chipaper).
+A minimalist **warm-paper light monospace theme** for Jellyfin (`10.10`, `10.11`, and `12+`), inspired by Swiss International Typographic Style.
 
 > Built for readers and media collectors who want calm, daylight-first typography, `1px` hairline structure, and zero visual clutter.
 
